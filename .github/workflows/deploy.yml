@@ -36,38 +36,14 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Show build output tree
-        run: find . -maxdepth 5 -not -path '*/node_modules/*' -not -path '*/.git/*' | sort
-
-      - name: Set output path
-        id: output_path
+      - name: Prepare static output
         run: |
-          if [ -d ".output/public" ] && [ -f ".output/public/index.html" ]; then
-            echo "path=.output/public" >> $GITHUB_OUTPUT
-          elif [ -d "dist" ] && [ -f "dist/index.html" ]; then
-            echo "path=dist" >> $GITHUB_OUTPUT
-          elif [ -d ".output/public" ]; then
-            echo "path=.output/public" >> $GITHUB_OUTPUT
-          elif [ -d "dist" ]; then
-            echo "path=dist" >> $GITHUB_OUTPUT
-          else
-            echo "ERROR: No build output found" && exit 1
-          fi
-          echo "Detected output path: $(cat $GITHUB_OUTPUT | grep path | tail -1)"
-
-      - name: Add SPA fallback and nojekyll
-        run: |
-          OUT="${{ steps.output_path.outputs.path }}"
-          # Prevent Jekyll from ignoring _-prefixed folders
-          touch "$OUT/.nojekyll"
-          # SPA fallback: copy index.html to 404.html so deep links work
-          if [ -f "$OUT/index.html" ]; then
-            cp "$OUT/index.html" "$OUT/404.html"
-            echo "Copied index.html → 404.html"
-          else
-            echo "WARNING: index.html not found in $OUT"
-            ls -la "$OUT"
-          fi
+          # TanStack Start SPA builds to dist/client with _shell.html
+          cp dist/client/_shell.html dist/client/index.html
+          cp dist/client/index.html dist/client/404.html
+          # .nojekyll and CNAME are already copied from public/ by the build
+          echo "dist/client contents:"
+          ls -la dist/client/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -75,7 +51,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.output_path.outputs.path }}
+          path: dist/client
 
       - name: Deploy to GitHub Pages
         id: deployment
