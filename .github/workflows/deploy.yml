@@ -36,13 +36,31 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Show build output
+        run: |
+          echo "=== Root ===" && ls -la
+          echo "=== dist ===" && ls -la dist 2>/dev/null || echo "No dist dir"
+          echo "=== .output ===" && ls -la .output 2>/dev/null || echo "No .output dir"
+          echo "=== .output/public ===" && ls -la .output/public 2>/dev/null || echo "No .output/public dir"
+
+      - name: Set output path
+        id: output_path
+        run: |
+          if [ -d ".output/public" ]; then
+            echo "path=.output/public" >> $GITHUB_OUTPUT
+          elif [ -d "dist" ]; then
+            echo "path=dist" >> $GITHUB_OUTPUT
+          else
+            echo "ERROR: No build output found" && exit 1
+          fi
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.output/public'
+          path: ${{ steps.output_path.outputs.path }}
 
       - name: Deploy to GitHub Pages
         id: deployment
