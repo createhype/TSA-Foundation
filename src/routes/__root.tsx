@@ -75,10 +75,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "TSA Foundation — Feeding Families Fighting Cancer" },
-      { name: "description", content: "Help us deliver nutritious meals and grocery kits to cancer patients and their families. Every donation brings dignity, nourishment and hope." },
+      {
+        name: "description",
+        content:
+          "Help us deliver nutritious meals and grocery kits to cancer patients and their families. Every donation brings dignity, nourishment and hope.",
+      },
       { name: "author", content: "TSA Foundation" },
       { property: "og:title", content: "TSA Foundation — Feeding Families Fighting Cancer" },
-      { property: "og:description", content: "Help us deliver nutritious meals and grocery kits to cancer patients and their families." },
+      {
+        property: "og:description",
+        content:
+          "Help us deliver nutritious meals and grocery kits to cancer patients and their families.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://tsafoundations.com" },
       { name: "twitter:card", content: "summary" },
